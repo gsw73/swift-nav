@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Swift Nav Job App Challenge</title>
+
+<style>
+div#answer {
+    display: none;
+    border-style: groove;
+    border-color: navy;
+    padding-left: 14px;
+    padding-right: 14px;
+}
+
+h3 {
+    color: navy;
+    text-decoration: underline;
+}
+
+p#p-answer {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: navy;
+}
+
+span#n-span {
+    font-weight: bold;
+    color: navy;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Swift Navigation Application Challenge</h1>
+
+<form id="user-input">
+    <fieldset>
+        <legend>Fibonacci and Fizz-Buzz</legend>
+        <p>The first n values of a Fibonacci series are generated and the value is substituted for...</p>
+        <ul>
+            <li><em>Buzz</em> if divisible by 3</li>
+            <li><em>Fizz</em> if divisible by 5</li>
+            <li><em>BuzzFizz</em> if prime</li>
+            <li>and the number, otherwise</li>
+        </ul>
+        <label for="n-elements">Enter <em>n</em>, number of Fibonacci series elements</label>
+        <input type=number placeholder="n" name="n_elements" id="n_elements" required="" />
+        <input type="submit" value="Submit">
+
+        <p>Note that precedence is assumed top to bottom as shown, e.g., 15 becomes
+        <em>Buzz</em> (even though divisible by 5) and 5 becomes <em>Fizz</em> even though prime.</p>
+
+        <p>This implementation creates the word list on the fly and only saves off
+        the last two Fib series numbers for forward calculation.</p>
+
+        <p>Note that the Fibonacci series may start with either 0 or 1 with the same
+        result.  This implementation begins with 0, which is substituted for a
+        <em>Buzz</em> because 0 is divisible by every number.</p>
+
+        <div id="answer">
+            <h3>Answer</h3>
+            <div id="answer-internal">
+            </div>
+        </div>
+
+    </fieldset>
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+    $( document ).ready( function() {
+        "use strict";
+
+        function is_prime( num ) {
+            if ( num == 0 || num == 1 ) {
+                return false;
+            } else if ( num == 2 ) {
+                return true;
+            } else {
+                for ( var x = 2; x < num; x++ ) {
+                    if ( num % x == 0 )
+                        return false;
+                }
+            }
+            return true;
+        }
+
+        function div_by_3( num ) {
+            if ( num % 3 == 0 ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function div_by_5( num ) {
+            if ( num % 5 == 0 ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        var main = function( n ) {
+            var DIV_BY_3 = "Buzz";
+            var DIV_BY_5 = "Fizz";
+            var PRIME = "BuzzFizz";
+
+            var last_two = [ 0, 1 ];
+            var next_el = 0;
+
+            var fib_list_words = "";
+
+            fib_list_words += "Buzz ";
+            if ( n == 1 ) { return( fib_list_words ); }
+
+            fib_list_words += "1 ";
+            if ( n == 2 ) { return( fib_list_words ); }
+
+            for ( var x = 2; x < n; x++ ) {
+                next_el = last_two[ 0 ] + last_two[ 1 ];
+                last_two[ 0 ] = last_two[ 1 ];
+                last_two[ 1 ] = next_el;
+
+                if ( div_by_3( next_el ) ) {
+                    fib_list_words += ( DIV_BY_3 + " " );
+                } else if ( div_by_5( next_el ) ) {
+                    fib_list_words += ( DIV_BY_5 + " " );
+                } else if ( is_prime( next_el ) ) {
+                    fib_list_words += ( PRIME + " " );
+                } else {
+                    fib_list_words += ( next_el.toString() + " " );
+                }
+            }
+            return( fib_list_words );
+        }
+
+        $( "#user-input" ).on( "submit", function( evObj ) {
+            evObj.preventDefault();
+
+            var $form = $(this);
+            var n = $form.find( "#n_elements" ).val();
+            var answer = main( n );
+            
+            var $p_ans = $( "<p></p>" ).append( answer ).attr( "id", "p-answer" );
+            var $p_leadin = $( "<p></p>" ).append( "Your input of <span id='n-span'>" + n + "</span> produced the following word list:" );
+
+            $form.find( "#answer-internal" ).empty();
+            $form.find( "#answer-internal" ).append( $p_leadin ).append( $p_ans );
+
+            $form.find( "#answer" ).show();
+
+            return;
+        });
+    });
+
+</script>
+
+</body>
+</html>
